@@ -1,0 +1,5 @@
+{
+    "director": ["auth_bp", "query_bp", "report_bp"],
+    "admin": ["auth_bp", "query_bp", "report_bp"],
+    "waiter": ["auth_bp", "orders_bp"]
+}

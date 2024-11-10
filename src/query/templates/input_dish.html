@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
+    <title>Поиск блюда</title>
+</head>
+<header>
+    <a class="header" href="/">Главное меню</a>
+    <a class="header" href="{{url_for('query_bp.queries_menu')}}">Меню запросов</a>
+    <h3 class="account">{{auth_msg}}</h3>
+</header>
+<body>
+<div class="main">
+    <h2>Ввод параметров запроса:</h2>
+    <form method="POST" action="">
+        <label for="dish_name" id="query_input">Название блюда: </label>
+        <input type="text" id="query_input" name="dish_name" required/>
+        <br><br>
+        <input type="submit" id="query_input" value="Получить таблицу"/>
+    </form>
+</div>
+</body>
+</html>
