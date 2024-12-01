@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{{table_title}}</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<header>
+    <a class="header" href="/">Главное меню</a>
+    <a class="header" href="{{url_for('report_bp.get_report_orders')}}">Просмотр отчётов</a>
+    <h3 class="account">{{auth_msg}}</h3>
+</header>
+<body>
+<div class="main">
+    <h2>{{table_title}}</h2>
+    <table border="1">
+        <tr class="title">
+            {% for col in header %}
+                <td>{{col}}</td>
+            {% endfor %}
+        </tr>
+        {% for row in rows %}
+        <tr>   
+            {% for col in row %}
+                <td>{{col}}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+</body>
+</html>

@@ -2,22 +2,13 @@ from os.path import dirname, join as pathjoin
 
 from flask import Flask, render_template, session, json
 from query.routes import query_blueprint
-from auth.routes import blueprint_auth
+from auth.routes import auth_blueprint
+from report.routes import report_blueprint
 from auth.auth import check_authorization
 
 
-cur_dir = dirname(__file__)
-
 app = Flask(__name__)
-with open(pathjoin(cur_dir, "data/dbconfig.json")) as f:
-    app.config['db_config'] = json.load(f)
-
-with open(pathjoin(cur_dir, "data/db_access.json")) as f:
-    app.config['db_access'] = json.load(f)
 app.secret_key = 'dasecretkey'
-
-app.register_blueprint(query_blueprint, url_prefix='/query')
-app.register_blueprint(blueprint_auth, url_prefix='/auth')
 
 
 @app.route('/')
@@ -33,5 +24,23 @@ def exit_func():
                            auth_msg=check_authorization()[0])
 
 
+def register_configs(app):
+    cur_dir = dirname(__file__)
+
+    with open(pathjoin(cur_dir, "data/dbconfig.json")) as f:
+        app.config['db_config'] = json.load(f)
+
+    with open(pathjoin(cur_dir, "data/db_access.json")) as f:
+        app.config['db_access'] = json.load(f)
+
+
+def register_blueprints(app):
+    app.register_blueprint(auth_blueprint, url_prefix='/auth')
+    app.register_blueprint(query_blueprint, url_prefix='/query')
+    app.register_blueprint(report_blueprint, url_prefix='/report')
+
+
 if __name__ == '__main__':
+    register_configs(app)
+    register_blueprints(app)
     app.run(host="127.0.0.1", port=5001, debug=True)

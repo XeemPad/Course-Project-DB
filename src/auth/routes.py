@@ -3,17 +3,17 @@ from auth.model_route import model_route_auth_request
 from auth.auth import check_authorization
 
 
-blueprint_auth = Blueprint('auth_bp', __name__, template_folder='templates')
+auth_blueprint = Blueprint('auth_bp', __name__, template_folder='templates')
 
 
-@blueprint_auth.route('/', methods=['GET'])
+@auth_blueprint.route('/', methods=['GET'])
 def auth_index():
     info = session.pop('info', default='')
     return render_template('login.html', info=info, 
                            auth_msg=check_authorization()[0])
 
 
-@blueprint_auth.route('/', methods=['POST'])
+@auth_blueprint.route('/', methods=['POST'])
 def auth_main():
     user_data = request.form
     res_info = model_route_auth_request(current_app.config['db_config'], user_data)
