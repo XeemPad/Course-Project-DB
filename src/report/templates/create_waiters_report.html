@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
+    <title>Input Category</title>
+</head>
+<header>
+    <a class="header" href="/">Главное меню</a>
+    <h3 class="account">{{auth_msg}}</h3>
+</header>
+<body>
+    <h1>Создать отчёт по работе официантов за указанный месяц</h2>
+    <form method="POST" action="">
+        <label for="yearMonth" id="inputMonth">Выберите год и месяц:</label><br>
+        <input type="month" id="year_month" name="year_month" 
+            min="2000-01" max="2030-12" required>
+        <br><br>
+        <input type="submit" id="year_month" value="Создать отчёт"/>
+    </form>
+
+
+</body>
+</html>

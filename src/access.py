@@ -17,7 +17,7 @@ def login_required(func):
                 return func(*args, **kwargs)  # то продолжаем выполнение функции
             # иначе выводим ошибку
             return render_template('error.html', error_title='Отказано в доступе', 
-                                   error_msg=f'Ваша роль {cur_user_group} не имеет прав для доступа к этой страницы', 
+                                   error_msg=f'Ваша роль {cur_user_group} не имеет прав для доступа к этой странице', 
                                    auth_msg=check_authorization()[0])
             
         # Если не авторизован, по редиректим на авторизацию

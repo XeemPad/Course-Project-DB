@@ -22,15 +22,16 @@ def reports_menu():
 
 @report_blueprint.route('/create', methods=['GET'])
 @login_required
-def create_report_orders():
-    ''' Page with a form for user to input desired period '''
-    return render_template("create_report.html", 
+def create_report():
+    ''' Page with a form for user to input report parameters to create respective report '''
+    report_name = request.args.get('name')
+    return render_template(f"create_{report_name}_report.html", 
                            auth_msg=check_authorization()[0])
 
 
 @report_blueprint.route('/create', methods=['POST'])
 @login_required
-def insert_report_orders():
+def insert_report():
     ''' Function that invokes the creation of report in DB '''
     request_data = request.form
     # Check whether report for such data already exists
@@ -55,14 +56,16 @@ def insert_report_orders():
 
 @report_blueprint.route('/view', methods=['GET'])
 @login_required
-def view_report_orders():
-    return render_template("get_report.html", 
+def view_report():
+    ''' Page with a form for user to input report parameters to view respective report '''
+    report_name = request.args.get('name')
+    return render_template(f"get_{report_name}_report.html", 
                            auth_msg=check_authorization()[0])
 
 
 @report_blueprint.route('/view', methods=['POST'])
 @login_required
-def extract_report_orders():
+def extract_report():
     ''' Function that extracts report from DB '''
     request_data = request.form
     # Check whether report for such data already exists

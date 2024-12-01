@@ -129,4 +129,5 @@ td {
 
 div.report {
     padding: 10px;
+    display: flex;
 }
