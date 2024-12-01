@@ -13,13 +13,13 @@
 <body>
     <div class="main">
         <h1>Меню выбора отчёта</h1>
-        <div class="report">Популярность блюд
-            <a href="{{url_for('report_bp.create_report', name='dishes')}}">Создать</a><br />
-            <a href="{{url_for('report_bp.view_report', name='dishes')}}">Просмотр</a><br />
+        <div class="report"><h3 class="report">Популярность блюд</h3>
+            <a href="{{url_for('report_bp.create_report', name='dishes')}}" class="report">Создать</a><br />
+            <a href="{{url_for('report_bp.view_report', name='dishes')}}" class="report">Просмотр</a><br />
         </div>
-        <div class="report">Работа официантов
-            <a href="{{url_for('report_bp.create_report', name='waiters')}}">Создать</a><br />
-            <a href="{{url_for('report_bp.view_report', name='waiters')}}">Просмотр</a><br />
+        <div class="report"><h3 class="report">Работа официантов</h3>
+            <a href="{{url_for('report_bp.create_report', name='waiters')}}" class="report">Создать</a><br />
+            <a href="{{url_for('report_bp.view_report', name='waiters')}}" class="report">Просмотр</a><br />
         </div>
     </div>
 

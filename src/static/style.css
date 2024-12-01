@@ -83,11 +83,18 @@ label#query_input {
     margin-right: 5px;
 }
 
-
 input#query_input {
     font-size: 30px;
 }
 
+label#inputMonth {
+    font-size: 32px;
+}
+
+input {
+    font-size: 40px;
+    margin: 10px auto;
+}
 
 h1 {
     color: rgb(11, 11, 11);
@@ -100,6 +107,18 @@ h1 {
 h2 {
     font-family: "Verdana";
     font-size: 44px;
+    font-weight: bold;
+}
+
+h3 {
+    color: rgb(11, 11, 11);
+    font-size: 36px;
+    font-weight: bold;
+}
+
+h4 {
+    color: rgb(33, 33, 33);
+    font-size: 30px;
     font-weight: bold;
 }
 
@@ -130,4 +149,14 @@ td {
 div.report {
     padding: 10px;
     display: flex;
+}
+
+h3.report {
+    margin: auto 10px;
+}
+
+a.report {
+    font-size: 24px;
+    padding: 10px;
+    margin: auto 10px;
 }
