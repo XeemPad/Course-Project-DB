@@ -1,9 +1,4 @@
-from os.path import dirname, join as pathjoin
-
 from flask import Flask, render_template, session, json
-from query.routes import query_blueprint
-from auth.routes import auth_blueprint
-from report.routes import report_blueprint
 from auth.auth import check_authorization
 
 
@@ -25,6 +20,8 @@ def exit_func():
 
 
 def register_configs(app):
+    from os.path import dirname, join as pathjoin
+    
     cur_dir = dirname(__file__)
 
     with open(pathjoin(cur_dir, "data/dbconfig.json")) as f:
@@ -35,6 +32,10 @@ def register_configs(app):
 
 
 def register_blueprints(app):
+    from query.routes import query_blueprint
+    from auth.routes import auth_blueprint
+    from report.routes import report_blueprint
+
     app.register_blueprint(auth_blueprint, url_prefix='/auth')
     app.register_blueprint(query_blueprint, url_prefix='/query')
     app.register_blueprint(report_blueprint, url_prefix='/report')
