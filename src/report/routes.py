@@ -1,6 +1,6 @@
 from os import error
 from flask import Blueprint, render_template, current_app, request
-from access import group_required
+from access import login_required
 from auth.auth import check_authorization
 from report.model_route import check_report_exists, create_new_report, \
     get_report_orders_db, ReportInfoResponse
@@ -14,23 +14,23 @@ report_blueprint = Blueprint(
 
 
 @report_blueprint.route('/')
-@group_required
+@login_required
 def reports_menu():
     ''' Reports menu '''
     return render_template('reports_menu.html', auth_msg=check_authorization()[0])
 
 
 @report_blueprint.route('/create', methods=['GET'])
-@group_required
-def request_report_orders():
+@login_required
+def create_report_orders():
     ''' Page with a form for user to input desired period '''
     return render_template("create_report.html", 
                            auth_msg=check_authorization()[0])
 
 
 @report_blueprint.route('/create', methods=['POST'])
-@group_required
-def create_report_orders():
+@login_required
+def insert_report_orders():
     ''' Function that invokes the creation of report in DB '''
     request_data = request.form
     # Check whether report for such data already exists
@@ -54,14 +54,14 @@ def create_report_orders():
 
 
 @report_blueprint.route('/view', methods=['GET'])
-@group_required
-def get_report_orders():
+@login_required
+def view_report_orders():
     return render_template("get_report.html", 
                            auth_msg=check_authorization()[0])
 
 
 @report_blueprint.route('/view', methods=['POST'])
-@group_required
+@login_required
 def extract_report_orders():
     ''' Function that extracts report from DB '''
     request_data = request.form

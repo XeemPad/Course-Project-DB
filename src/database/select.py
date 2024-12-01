@@ -65,3 +65,18 @@ def insert(db_config: dict, _sql: str):
             return result
     return False
 
+
+
+def stored_procedure(db_config: dict, procedure_name: str, *args) -> bool:
+    print(stored_procedure, procedure_name, *args)
+
+    try:
+        with DBContextManager(db_config) as cursor:
+            if not cursor:
+                raise CursorError("Cursor could not be created")
+            else:
+                cursor.callproc(procedure_name, (*args, ))
+    except CursorError:
+        return False
+    
+    return True

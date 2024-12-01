@@ -13,9 +13,14 @@
 <body>
     <div class="main">
         <h1>Меню выбора отчёта</h1>
-        <a href="{{url_for('query_bp.request_dish_info')}}">Информация о блюде</a><br />
-        <a href="{{url_for('query_bp.request_waiter_info')}}">Информация о официанте</a><br />
-        <a href="{{url_for('query_bp.request_table_info')}}">Информация о столе</a><br />
+        <div class="report">Популярность блюд
+            <a href="{{url_for('report_bp.create_dish_popularity')}}">Создать</a><br />
+            <a href="{{url_for('report_bp.view_dish_popularity')}}">Просмотр</a><br />
+        </div>
+        <div class="report">Работа официантов
+            <a href="{{url_for('report_bp.create_waiter_info')}}">Создать</a><br />
+            <a href="{{url_for('report_bp.view_waiter_info')}}">Просмотр</a><br />
+        </div>
     </div>
 
 </body>
