@@ -1,18 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
-    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
-    <title>Input Category</title>
-</head>
-<header>
-    <a class="header" href="/">Главное меню</a>
+{% extends 'base.html' %}
+
+{% block title %}Ввод параметров{% endblock %}
+{% block header %}
     <a class="header" href="{{url_for('report_bp.reports_menu')}}">Меню отчётов</a>
-    <h3 class="account">{{auth_msg}}</h3>
-</header>
-<body>
-<div class="main">
+{% endblock %}
+
+{% block content %}
     <h1>Открыть отчёт по популярности блюд за указанный месяц</h2>
     <form method="POST" action="">
         <label for="yearMonth" id="inputMonth">Выберите год и месяц:</label><br>
@@ -21,6 +14,4 @@
         <br><br>
         <input type="submit" class="submit" id="year_month" value="Создать отчёт"/>
     </form>
-</div>
-</body>
-</html>
+{% endblock %}

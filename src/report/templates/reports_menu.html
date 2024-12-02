@@ -1,17 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Меню выбора отчёта</title>
-    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
-    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
-</head>
-<header>
-    <a class="header" href="/">Главное меню</a>
-    <h3 class="account">{{auth_msg}}</h3>
-</header>
-<body>
-    <div class="main">
+{% extends 'base.html' %}
+
+{% block title %}Меню отчётов{% endblock %}
+
+{% block content %}
         <h1>Меню выбора отчёта</h1>
         <div class="report"><h3 class="report">Популярность блюд</h3>
             <a href="{{url_for('report_bp.create_report', name='dishes')}}" class="report">Создать</a><br />
@@ -21,7 +12,4 @@
             <a href="{{url_for('report_bp.create_report', name='waiters')}}" class="report">Создать</a><br />
             <a href="{{url_for('report_bp.view_report', name='waiters')}}" class="report">Просмотр</a><br />
         </div>
-    </div>
-
-</body>
-</html>
+{% endblock %}

@@ -1,24 +1,14 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>{{table_title}}</title>
-    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
-    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
-</head>
-<header>
-    <a class="header" href="/">Главное меню</a>
+{% extends 'base.html' %}
+
+{% block title %}{{table_title}}{% endblock %}
+{% block header %}
     <a class="header" href="{{url_for('query_bp.queries_menu')}}">Меню запросов</a>
     <a class="header" href="{{ prev_page }}">Назад</a>
-    <h3 class="account">{{auth_msg}}</h3>
-</header>
-<body>
-<div class="main">
+{% endblock %}
+
+{% block content %}
     <h1>{{table_title}}</h1>
     {% for col_name in dictionary %}
         <h2>{{col_name}}: {{dictionary[col_name]}}</h2>
     {% endfor %}
-</div>
-
-</body>
-</html>
+{% endblock %}

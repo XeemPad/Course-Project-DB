@@ -1,18 +1,11 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
-    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
-    <title>Error</title>
-</head>
-<header>
-    <a class="header" href="/">Главное меню</a>
+{% extends 'base.html' %}
+
+{% block title %}Результат{% endblock %}
+{% block header %}
     <a class="header" href="{{url_for('report_bp.reports_menu')}}">Меню отчётов</a>
-    <h3 class="account">{{auth_msg}}</h3>
-</header>
-<body>
-<div class="main" >
+{% endblock %}
+
+{% block content %}
     <h1>{{status_title}}</h1>
     <h2>{{status_msg}}</h2>
     <a class="back" href="{{ prev_page }}">Назад к вводу параметров</a>
@@ -20,6 +13,4 @@
     <br>
     <a href="{{ url_for('report_bp.view_report', name=report_name) }}">Перейти к просмотру отчёта</a>
     {% endif %}
-</div>
-</body>
-</html>
+{% endblock %}

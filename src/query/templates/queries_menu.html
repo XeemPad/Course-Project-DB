@@ -1,22 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Меню выбора запросов</title>
-    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
-    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
-</head>
-<header>
-    <a class="header" href="/">Главное меню</a>
-    <h3 class="account">{{auth_msg}}</h3>
-</header>
-<body>
-    <div class="main">
-        <h1>Меню выбора запроса</h1>
-        <a href="{{url_for('query_bp.request_dish_info')}}">Информация о блюде</a><br />
-        <a href="{{url_for('query_bp.request_waiter_info')}}">Информация о официанте</a><br />
-        <a href="{{url_for('query_bp.request_table_info')}}">Информация о столе</a><br />
-    </div>
+{% extends 'base.html' %}
 
-</body>
-</html>
+{% block title %}Меню выбора запросов{% endblock %}
+
+{% block content %}
+    <h1>Меню выбора запроса</h1>
+    <a href="{{url_for('query_bp.request_dish_info')}}">Информация о блюде</a><br />
+    <a href="{{url_for('query_bp.request_waiter_info')}}">Информация о официанте</a><br />
+    <a href="{{url_for('query_bp.request_table_info')}}">Информация о столе</a><br />
+{% endblock %}

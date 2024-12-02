@@ -1,20 +1,9 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
-    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
-    <title>Error</title>
-</head>
-<header>
-    <a class="header" href="/">Главное меню</a>
-    <h3 class="account">{{auth_msg}}</h3>
-</header>
-<body>
-    <div class="main" >
+{% extends 'base.html' %}
+
+{% block title %}Ошибка{% endblock %}
+
+{% block content %}
         <h1>{{error_title}}</h1>
         <h2>{{error_msg}}</h2>
         <a class="back" href="{{ prev_page }}">Назад к вводу запроса</a>
-    </div>
-</body>
-</html>
+{% endblock %}
