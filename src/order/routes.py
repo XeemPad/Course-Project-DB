@@ -3,7 +3,7 @@ import re
 from flask import Blueprint, session, redirect, url_for, render_template, current_app, request
 from access import login_required, check_authorization
 from cache.wrapper import fetch_from_cache
-from database.select import select_dict
+from database.select import select_dict, select_line
 from order.model_route import transaction_order
 import os
 from database.sql_provider import SQLProvider
@@ -105,26 +105,42 @@ def clear_basket():
     
     return redirect(url_for('order_bp.basket_index'))
 
-@order_blueprint.route('/save_order')
+@order_blueprint.route('/save_order', methods=['POST'])
 @login_required
 def save_order():
-    if not session.get('basket',{}):
+    if not session.get('basket', {}):
         return redirect(url_for('order_bp.basket_index'))
-    # if not session.get('user_id',""):
-    #     return render_template("error.html", message="Вы не авторизованы на сайте, авторизируйтесь для регистрации заказа")
-    print("Order success")
-    current_basket = session.get('basket', {})
-    user_id = session.get('user_id', -1)
+
+    db_config = current_app.config['db_config']
+
+    # Получаем id официанта в таблице Waiters:
+    user_id = str(session['user_id'])
     _sql = provider.get('get_waiter_id_from_users.sql', user_id=user_id)
-    waiter_id = select_dict(db_config, _sql)['idWaiter']
-    result = transaction_order(current_app.config['db_config'], current_basket[user_id], user_id)
+    waiter_id = select_line(db_config, _sql)['idWaiter']
+
+    current_basket = session['basket'][user_id]
+    table_id = request.form.get('table_id')
+    if not select_line(db_config, provider.get('get_table.sql', table_id=table_id)):
+        return render_template("order_error.html", error_title="Заказ не был создан", 
+                               error_msg="Указан неверный номер столика",
+                               auth_msg=check_authorization()[0])
+    if not current_basket:
+        return render_template("order_error.html", error_title="Заказ не был создан", 
+                               error_msg="Корзина пуста",
+                               auth_msg=check_authorization()[0])
+
+
+    cache_select_dict = fetch_from_cache('dishes_cached', current_app.config['cache_config'])(select_dict)
+    dishes = cache_select_dict(db_config, provider.get('all_dishes.sql'))
+
+    result = transaction_order(db_config, current_basket, dishes, waiter_id, table_id)
+    print("Order success")
     if result.status:
         clear_basket()
-        return render_template("order_finish.html", order_id = result.result[0],
+        return render_template("order_finish.html", order_id=result.result[0],
                                auth_msg=check_authorization()[0])
-    else:
-        return render_template("error.html", error_title="Заказ не был создан",
-                               auth_msg=check_authorization()[0])
+    return render_template("error.html", error_title="Заказ не был создан", error_msg=result.error_message,
+                           auth_msg=check_authorization()[0])
 
 
 def form_basket(dishes_info: list[dict]) -> list[dict]:

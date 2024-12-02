@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block title %}Ошибка{% endblock %}
+
+{% block content %}
+    <h1>{{error_title}}</h1>
+    <h2>{{error_msg}}</h2>
+    <a class="back" href="{{ url_for('order_bp.basket_index') }}">Назад к созданию заказа</a>
+{% endblock %}

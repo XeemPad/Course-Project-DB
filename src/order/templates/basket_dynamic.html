@@ -37,7 +37,6 @@
 <div class="container">
     <div class="row">
         <div class="basket col-md-8">
-            <a href="{{url_for('order_bp.save_order')}}">Сделать заказ</a><br>
             <h2>Доступные блюда</h2><br>
             {% if dishes %}
                 {% for dish in dishes %}
@@ -48,7 +47,6 @@
             {% endif %}
         </div>
         <div class="basket col-md-4">
-            <a href="{{url_for('order_bp.clear_basket')}}">Очистить корзину</a><br>
             <h2>Корзина</h2><br>
             {% if basket %}
                 {% for item in basket %}
@@ -57,6 +55,13 @@
             {% else %}
                 <p class="info">Ваша корзина пуста</p>
             {% endif %}
+            <br>
+            <a href="{{url_for('order_bp.clear_basket')}}">Очистить корзину</a><br><br><br>
+            <form action="{{ url_for('order_bp.save_order') }}" method="POST">
+                <label for="table_id" id="query_input">Номер стола: </label>
+                <input type="number" id="query_input" name="table_id" required/><br><br>
+                <button type="submit" class="submit-button">Сохранить заказ</button>
+            </form>
         </div>
     </div>
 

@@ -32,37 +32,50 @@ def select_dict(db_config: dict, _sql: str):
     return result_dict
 
 
-def select_line(db_config: dict, _sql: str):
+def select_line(db_config: dict, _sql: str, curs=None):
     print(select_line, _sql)
+    if curs:
+        curs.execute(_sql)
+        result = curs.fetchall()
+        if not result:
+            return dict()
+        result = result[0]
 
-    with DBContextManager(db_config) as cursor:
+        res_dict = dict([(item[0], result[i]) for i, item in enumerate(curs.description)])
+        return res_dict
+    else:
+        with DBContextManager(db_config) as cursor:
 
-        if cursor is None:
-            raise CursorError("Cursor could not be created")
-        else:
-            cursor.execute(_sql)
-            result = cursor.fetchall()
-            if not result:
-                return dict()
-            result = result[0]
+            if cursor is None:
+                raise CursorError("Cursor could not be created")
+            else:
+                cursor.execute(_sql)
+                result = cursor.fetchall()
+                if not result:
+                    return dict()
+                result = result[0]
 
-            res_dict = dict([(item[0], result[i]) for i, item in enumerate(cursor.description)])
-            return res_dict
+                res_dict = dict([(item[0], result[i]) for i, item in enumerate(cursor.description)])
+                return res_dict
 
     print('With clause was exited early in select.py/select_line')
     return dict()
 
 
-def insert(db_config: dict, _sql: str):
+def insert(db_config: dict, _sql: str, curs=None):
     print(insert, _sql)
-    with DBContextManager(db_config) as cursor:
+    if curs:
+        result = curs.execute(_sql)
 
-        if cursor is None:
-            raise CursorError("Cursor could not be created")
-        else:
-            result = cursor.execute(_sql)
+        return result
+    else:
+        with DBContextManager(db_config) as cursor:
+            if cursor is None:
+                raise CursorError("Cursor could not be created")
+            else:
+                result = cursor.execute(_sql)
 
-            return result
+                return result
     return False
 
 
@@ -80,3 +93,18 @@ def stored_procedure(db_config: dict, procedure_name: str, *args) -> bool:
         return False
     
     return True
+
+
+def update(db_config: dict, _sql: str, curs=None):
+    try:
+        if curs:
+            curs.execute(_sql)
+        else:
+            with DBContextManager(db_config) as cursor:
+                if cursor is None:
+                    raise ValueError("Cursor not created")
+                else:
+                    cursor.execute(_sql)
+    except Exception as e:
+        return False, str(e)
+    return True, 'success'
