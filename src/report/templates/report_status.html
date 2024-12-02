@@ -8,16 +8,14 @@
 </head>
 <header>
     <a class="header" href="/">Главное меню</a>
+    <a class="header" href="{{url_for('report_bp.reports_menu')}}">Меню отчётов</a>
     <h3 class="account">{{auth_msg}}</h3>
 </header>
 <body>
-    <div class="main" >
-        <h1>{{status_title}}</h1>
-        <h2>{{status_msg}}</h2>
-        <a class="back" href="{{ url_for('report_bp.request_report_orders') }}">
-            Перейти к созданию отчётов</a><br>
-        <a class="back" href="{{ url_for('report_bp.get_report_orders') }}">
-            Перейти к просмотру отчётов</a>
-    </div>
+<div class="main" >
+    <h1>{{status_title}}</h1>
+    <h2>{{status_msg}}</h2>
+    <a class="back" href="{{ prev_page }}">Назад к вводу параметров</a>
+</div>
 </body>
 </html>

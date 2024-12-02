@@ -8,7 +8,7 @@
 </head>
 <header>
     <a class="header" href="/">Главное меню</a>
-    <a class="header" href="{{url_for('report_bp.get_report_orders')}}">Просмотр отчётов</a>
+    <a class="header" href="{{url_for('report_bp.reports_menu')}}">Меню отчётов</a>
     <h3 class="account">{{auth_msg}}</h3>
 </header>
 <body>
@@ -28,6 +28,7 @@
         </tr>
         {% endfor %}
     </table>
+    <a class="back" href="{{ prev_page }}">Назад к вводу параметров</a>
 </div>
 
 </body>

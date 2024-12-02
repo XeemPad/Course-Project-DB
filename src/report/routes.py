@@ -1,5 +1,5 @@
 from os import error
-from flask import Blueprint, render_template, current_app, request
+from flask import Blueprint, render_template, current_app, request, session
 from access import login_required
 from auth.auth import check_authorization
 from report.model_route import check_report_exists, create_new_report, \
@@ -24,6 +24,7 @@ def reports_menu():
 @login_required
 def create_report():
     ''' Page with a form for user to input report parameters to create respective report '''
+    session['next'] = request.url
     report_name = request.args.get('name')
     return render_template(f"create_{report_name}_report.html", 
                            auth_msg=check_authorization()[0])
@@ -33,10 +34,12 @@ def create_report():
 @login_required
 def insert_report():
     ''' Function that invokes the creation of report in DB '''
+    report_name = request.args.get('name')
+
     request_data = request.form
     # Check whether report for such data already exists
     exist_info: ReportInfoResponse = check_report_exists(current_app.config['db_config'], 
-                                                         request_data)
+                                                         request_data, report_name)
     if exist_info.status:  # if exists
         return render_template("report_status.html", 
                                status_title='Отчёт на данный период уже существует',
@@ -45,7 +48,7 @@ def insert_report():
     
     # Execute procedure:
     res_info: ReportInfoResponse = create_new_report(current_app.config['db_config'], 
-                                                     request_data)
+                                                     request_data, report_name)
     if res_info.status:
         return render_template("report_status.html", status_title='Отчёт успешно создан',
                                 auth_msg=check_authorization()[0])
@@ -58,6 +61,7 @@ def insert_report():
 @login_required
 def view_report():
     ''' Page with a form for user to input report parameters to view respective report '''
+    session['next'] = request.url
     report_name = request.args.get('name')
     return render_template(f"get_{report_name}_report.html", 
                            auth_msg=check_authorization()[0])
@@ -67,10 +71,11 @@ def view_report():
 @login_required
 def extract_report():
     ''' Function that extracts report from DB '''
+    report_name = request.args.get('name')
     request_data = request.form
     # Check whether report for such data already exists
     exist_info: ReportInfoResponse = check_report_exists(current_app.config['db_config'], 
-                                                         request_data)
+                                                         request_data, report_name)
     if not exist_info.status:  # if not exists
         return render_template("report_status.html", 
                                status_title='Отчёт на данный период не существует',
@@ -78,7 +83,7 @@ def extract_report():
                                auth_msg=check_authorization()[0])
     
     res_info: ReportInfoResponse = get_report_orders_db(current_app.config['db_config'], 
-                                                        request_data)
+                                                        request_data, report_name)
     if not res_info.status:
         return render_template("report_status.html", 
                                status_title='Отчёт не найден',
