@@ -24,7 +24,6 @@ def reports_menu():
 @login_required
 def create_report():
     ''' Page with a form for user to input report parameters to create respective report '''
-    session['next'] = request.url
     report_name = request.args.get('name')
     return render_template(f"create_{report_name}_report.html", 
                            auth_msg=check_authorization()[0])
@@ -61,7 +60,6 @@ def insert_report():
 @login_required
 def view_report():
     ''' Page with a form for user to input report parameters to view respective report '''
-    session['next'] = request.url
     report_name = request.args.get('name')
     return render_template(f"get_{report_name}_report.html", 
                            auth_msg=check_authorization()[0])
