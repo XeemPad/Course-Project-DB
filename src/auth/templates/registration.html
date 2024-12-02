@@ -1,17 +1,8 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Регистрация</title>
-    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}" />
-    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
-</head>
-<body>
-<header>
-    <a class="header" href="/">Главное меню</a>
-    <h3 class="account">{{auth_msg}}</h3>
-</header>
-<div class="main" style="text-align: center;">
+{% extends 'base.html' %}
+
+{% block title %}Регистрация{% endblock %}
+{% block content %}
+<div style="text-align: center;">
     <h1>Регистрация</h1>
     <form method="POST" action="">
         <input name="login" type="text" placeholder="Логин" required /><br />
@@ -22,8 +13,5 @@
     </form>
     <br />
     <a href="{{url_for('auth_bp.auth_index')}}">Назад</a>
-
 </div>
-
-</body>
-</html>
+{% endblock %}
