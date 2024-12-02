@@ -1,13 +1,13 @@
-{% macro render_item(item, show_amount = False, show_form = False) %}
+{% macro render_item(item, show_amount=False, show_form=False) %}
 
- <div class="goods">
-    <div class="good">
-    <span class="item">{{item['prod_name']}}</span><br>
-    <span class="price">{{item['prod_price']}} руб/{{item['prod_amount']}} {{item['prod_measure']}}</span><br>
+ <div class="dishes">
+    <div class="dish">
+    <span class="item">{{item['dishName']}}</span><br>
+    <span class="price">{{item['priceInRubles']}} руб/{{item['weightInGramms']}} грамм</span><br>
     {% if show_amount %}
         <span class="amount">Количество: {{item['amount']}}</span>
         <form method="POST" action="">
-            <input type="hidden" name="product_display" value="{{item['id']}}" />
+            <input type="hidden" name="dish_display_id" value="{{item['idDish']}}" />
             <button type="submit" name="product_display_minus" value="minus" class="plusminus">-</button>
             <button type="submit" name="product_display_plus" value="plus" class="plusminus">+</button>
         </form>
@@ -15,14 +15,15 @@
 
     {% if show_form %}
         <form method="POST" action="">
-            <input type="hidden" name="product_display" value="{{item['id']}}" id="hidden"/>
-            <input type="submit" value="Купить" name="buy" id="buy" />
+            <input type="hidden" name="dish_display_id" value="{{item['idDish']}}" id="hidden"/>
+            <input type="submit" value="Добавить" name="buy" id="buy" />
         </form>
     {% endif %}
     </div>
  </div>
 
 {% endmacro %}
+
 
 {% extends 'base.html' %}
 
@@ -33,33 +34,31 @@
 </head>
 
 {% block content %}
-<div style="width: 70%">
-    <div class="container">
-        <a href="{{url_for('basket_bp.save_order')}}">Сделать заказ</a><br>
-        <div class="row">
-            <div class="basket col-md-8">
-                <h2>Доступные блюда</h2><br>
-                {% if products %}
-                    {% for product in products %}
-                    {{ render_item(product, show_form = True, show_amount = False) }}
-                    {% endfor %}
-                {% else %}
-                    <span>Нет доступных блюд (Не удалось подключиться к базе данных или кэшу)</span>
-                {% endif %}
-            </div>
-            <div class="basket col-md-4">
-                <h2>Корзина</h2><br>
-                <a href="{{url_for('basket_bp.clear_basket')}}">Очистить корзину</a><br>
-                {% if basket %}
-                    {% for item in basket %}
-                    {{ render_item(item, show_form = False, show_amount = True) }}
-                    {% endfor %}
-                {% else %}
-                    <p class="info">Ваша корзина пуста</p>
-                {% endif %}
-            </div>
+<div class="container">
+    <div class="row">
+        <div class="basket col-md-8">
+            <a href="{{url_for('order_bp.save_order')}}">Сделать заказ</a><br>
+            <h2>Доступные блюда</h2><br>
+            {% if dishes %}
+                {% for dish in dishes %}
+                    {{ render_item(dish, show_form=True, show_amount=False) }}
+                {% endfor %}
+            {% else %}
+                <p class="info">Нет доступных блюд (Не удалось подключиться к базе данных или кэшу)</p>
+            {% endif %}
         </div>
-
+        <div class="basket col-md-4">
+            <a href="{{url_for('order_bp.clear_basket')}}">Очистить корзину</a><br>
+            <h2>Корзина</h2><br>
+            {% if basket %}
+                {% for item in basket %}
+                    {{ render_item(item, show_form=False, show_amount=True) }}
+                {% endfor %}
+            {% else %}
+                <p class="info">Ваша корзина пуста</p>
+            {% endif %}
+        </div>
     </div>
+
 </div>
 {% endblock %}

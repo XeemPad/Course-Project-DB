@@ -25,7 +25,7 @@ def auth_main():
 
     session['login'] = res_info.user_info['login']
     session['user_group'] = res_info.user_info['user_group']
-    session['user_id'] = (res_info.user_info['idIntUser'] if 'idIntUser' in res_info.user_info 
+    session['user_id'] = int(res_info.user_info['idIntUser'] if 'idIntUser' in res_info.user_info 
                           else res_info.user_info['idExtUser'])
     print(f'User with user_id {session['user_id']} ({session['user_group']}) authorized')
 

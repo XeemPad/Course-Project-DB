@@ -18,107 +18,105 @@ provider = SQLProvider(os.path.join(os.path.dirname(__file__), 'sql'))
 @login_required
 def basket_index():
     ''' Получение списка блюд, которые можно добавить в корзину (заказ) '''
-
+    
     # Получаем список всех блюд из Кэша 
     cache_select_dict = fetch_from_cache('dishes_cached', current_app.config['cache_config'])(select_dict)
-    _sql = provider.get('all_goods.sql')
-    products = cache_select_dict(current_app.config['db_config'], _sql)
-    print(products)
+    _sql = provider.get('all_dishes.sql')
+    dishes = cache_select_dict(current_app.config['db_config'], _sql)
+    print('Dishes list from cache:', dishes)
 
-    # Достаём текущую корзину из сессии:
+    # Убеждаемся, что в сессии есть корзина:
     if 'basket' not in session:
-        session['basket'] = {session['user_id']: {}}
-    basket = session['basket']
-    print("Basket from session: ", basket)
-    current_basket = form_basket(products)
+        session['basket'] = {str(session['user_id']): {}}
+    print("Basket from session: ", session['basket'])
+
+    current_basket = form_basket(dishes)
+    print("Current basket: ", current_basket)
     
-    return render_template('basket_dynamic.html', products=products, basket=current_basket,
+    return render_template('basket_dynamic.html', dishes=dishes, basket=current_basket,
                            auth_msg=check_authorization()[0])
 
 @order_blueprint.route('/', methods=['POST'])
 @login_required
 def basket_main():
-    db_config = current_app.config['db_config']
-    user_id = session['user_id']
+
+    # Нужно извлечь id официанта:
+    user_id = str(session['user_id'])
+
+    # Получаем корзину:
     session['basket'] = session.get('basket', {user_id: {}})
     if user_id not in session['basket']:
         session['basket'][user_id] = {}
-    basket = session['basket']
-    print(basket)
-    current_basket = basket[user_id]
+
+    # Получаем список всех блюд из Кэша 
+    cache_select_dict = fetch_from_cache('dishes_cached', current_app.config['cache_config'])(select_dict)
+    _sql = provider.get('all_dishes.sql')
+    dishes = cache_select_dict(current_app.config['db_config'], _sql)
+    
+    current_basket = session['basket'][user_id]
     print("BASKET=", current_basket)
+
+    # При нажатии кнопки Добавить:
     if request.form.get('buy'):
-        # adding to basket
-        if not 'basket' in session:
-            session['basket'][user_id] = {user_id: {}}
-        _sql = provider.get('one_good.sql', e_prod_id=int(request.form['product_display']))
-        products = select_dict(db_config, _sql)
-        if not products:
-            return render_template('error.html', error_title='Не удалось получить товар', 
-                                   error_msg='Возможно, БД не работает', auth_msg=check_authorization()[0])
-        product = products[0]
-        print(product)
+
+        # Достаём информацию о продукте из кэша:
+        dish = tuple(filter(lambda dict_: dict_['idDish'] == int(request.form['dish_display_id']), dishes))[0]
+        print(dish)
+
+        dish_id = str(dish['idDish'])  # json поддерживает только строки
+        if dish_id in current_basket:
+            amount = int(current_basket[dish_id])
+            session['basket'][user_id][dish_id] = str(amount + 1)
+        else:
+            print("NEW dish")
+            session['basket'][user_id][dish_id] = '1'
+            print(session['basket'])
+        session.modified = True
+
+    if request.form.get('product_display_plus') or request.form.get('product_display_minus'):
+        if request.form.get('product_display_plus'):  # increasing count in basket
+            add = 1
+        else:  # decreasing count in basket
+            add = -1
         
-        # сессия поддерживает сериализацию через json, поэтому ключ может быть только строчкой
-        # сессия не запоминает изменения значений по ключу, только добавление или удалени
-        # поэтому нужно вручную указывать изменение сессии
+        # Достаём информацию о продукте из кэша:
+        dish = tuple(filter(lambda dict_: dict_['idDish'] == int(request.form['dish_display_id']), dishes))[0]
+        print(dish)
 
-        if str(product['id']) in current_basket:
-            prid = str(product['id'])
-            amount = int(session['basket'][user_id][prid])
-            session['basket'][user_id][prid] = str(amount+1)
-            session.modified = True
+        amount = int(session['basket'][user_id][str(dish['idDish'])])
+        if amount + add == 0:
+            session['basket'][user_id].pop(str(dish['idDish']))
         else:
-            print("NEW PRODUCT")
-            prid = str(product['id'])
-            session['basket'][user_id][prid] = '1'
-            print(session['basket'][user_id])
-            session.modified = True
-
-    if request.form.get('product_display_plus'):
-        # increasing count in basket
-        _sql = provider.get('one_good.sql', e_prod_id=int(request.form['product_display']))
-        product = select_dict(db_config, _sql)[0]
-        amount = int(session['basket'][user_id][str(product['id'])])
-        session['basket'][user_id][str(product['id'])] = str(amount + 1)
+            session['basket'][user_id][str(dish['idDish'])] = str(amount + add)
         session.modified = True
 
-    if request.form.get('product_display_minus'):
-        # decreasing count in basket
-        _sql = provider.get('one_good.sql', e_prod_id=int(request.form['product_display']))
-        product = select_dict(db_config, _sql)[0]
-        amount = int(session['basket'][user_id][str(product['id'])])
-        if amount == 1:
-            session['basket'][user_id].pop(str(product['id']))
-        else:
-            session['basket'][user_id][str(product['id'])] = str(amount - 1)
-        session.modified = True
+    return redirect(url_for('order_bp.basket_index'))
 
-    return redirect(url_for('basket_bp.basket_index'))
 
 @order_blueprint.route('/clear_basket')
 @login_required
 def clear_basket():
-    user_id = session['user_id']
-    basket = session.get('basket', {user_id: {}})[user_id]
+    user_id = str(session['user_id'])
+    basket = session.get('basket', {})
     if basket:
         session['basket'].pop(user_id)
-        print(session['basket'])
         session['basket'][user_id] = {}
         session.modified = True
-     
-    return redirect(url_for('basket_bp.basket_index'))
+    
+    return redirect(url_for('order_bp.basket_index'))
 
 @order_blueprint.route('/save_order')
 @login_required
 def save_order():
     if not session.get('basket',{}):
-        return redirect(url_for('basket_bp.basket_index'))
+        return redirect(url_for('order_bp.basket_index'))
     # if not session.get('user_id',""):
     #     return render_template("error.html", message="Вы не авторизованы на сайте, авторизируйтесь для регистрации заказа")
     print("Order success")
     current_basket = session.get('basket', {})
     user_id = session.get('user_id', -1)
+    _sql = provider.get('get_waiter_id_from_users.sql', user_id=user_id)
+    waiter_id = select_dict(db_config, _sql)['idWaiter']
     result = transaction_order(current_app.config['db_config'], current_basket[user_id], user_id)
     if result.status:
         clear_basket()
@@ -129,13 +127,16 @@ def save_order():
                                auth_msg=check_authorization()[0])
 
 
-def form_basket(dishes_info: dict):
-    if 'basket' not in session or session['user_id'] not in session['basket']:
+def form_basket(dishes_info: list[dict]) -> list[dict]:
+    user_id = str(session['user_id'])
+    if 'basket' not in session or user_id not in session['basket']:
         return []
+    
     basket = []
-    for k, v in session['basket'][session['user_id']].items():
-        dish = dishes_info
-        dish['amount'] = v
+    for dish_id, dish_amount in session['basket'][user_id].items():
+        dish = tuple(filter(lambda dict_: dict_['idDish'] == int(dish_id), dishes_info))[0]  # find dish in cache
+        print(dish)
+        dish['amount'] = dish_amount
         basket.append(dish)
     return basket
 

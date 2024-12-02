@@ -4,7 +4,6 @@ from cache.redis_cache import RedisCache
 
 def fetch_from_cache(cache_name: str, cache_config: dict):
     cache_conn = RedisCache(cache_config['redis']) # подключаемся к Redis
-    print(cache_config)
     ttl = cache_config['ttl']  # time to last
 
     def decorator(f):

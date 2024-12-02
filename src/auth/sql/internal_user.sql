@@ -2,7 +2,7 @@ SELECT
     idIntUser,
     login,
     user_group,
-    waiter_id
+    idWaiter
 FROM InternalUser
 WHERE 1=1
     AND login='$login'

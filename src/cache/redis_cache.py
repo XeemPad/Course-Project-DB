@@ -26,7 +26,6 @@ class RedisCache:
         value_js = self.conn.get(name)
         if value_js:
             value_dict = json.loads(value_js)
-            print(value_dict)
             return value_dict
         else:
             return None
