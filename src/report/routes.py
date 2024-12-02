@@ -43,17 +43,17 @@ def insert_report():
     if exist_info.status:  # if exists
         return render_template("report_status.html", 
                                status_title='Отчёт на данный период уже существует',
-                               status_msg=exist_info.error_message,
+                               status_msg=exist_info.error_message, report_name=report_name,
                                auth_msg=check_authorization()[0])
     
     # Execute procedure:
     res_info: ReportInfoResponse = create_new_report(current_app.config['db_config'], 
                                                      request_data, report_name)
     if res_info.status:
-        return render_template("report_status.html", status_title='Отчёт успешно создан',
+        return render_template("report_status.html", status_title='Отчёт успешно создан', report_name=report_name,
                                 auth_msg=check_authorization()[0])
     return render_template("report_status.html", status_title='Отчёт не был создан',
-                            status_msg=res_info.error_message,
+                            status_msg=res_info.error_message, report_name=None,
                             auth_msg=check_authorization()[0])
 
 
