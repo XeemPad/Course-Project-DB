@@ -3,7 +3,7 @@ import re
 from flask import Blueprint, session, redirect, url_for, render_template, current_app, request
 from access import login_required, check_authorization
 from cache.wrapper import fetch_from_cache
-from database.select import select_dict, select_line
+from database.select import select_dict, select_line, CursorError
 from order.model_route import transaction_order
 import os
 from database.sql_provider import SQLProvider
@@ -116,7 +116,18 @@ def save_order():
     # Получаем id официанта в таблице Waiters:
     user_id = str(session['user_id'])
     _sql = provider.get('get_waiter_id_from_users.sql', user_id=user_id)
-    waiter_id = select_line(db_config, _sql)['idWaiter']
+    try:
+        waiter_id = select_line(db_config, _sql)['idWaiter']
+    except CursorError as ce:
+        print('waiter_id', ce)
+        return render_template("order_error.html", error_title="Заказ не был создан", 
+                               error_msg="Не удалось подключиться к базе данных",
+                               auth_msg=check_authorization()[0])
+    except KeyError as ce:
+        print('waiter_id', ce)
+        return render_template("order_error.html", error_title="Заказ не был создан", 
+                               error_msg="Не удалось найти официанта связанного с данным аккаунтом",
+                               auth_msg=check_authorization()[0])
 
     current_basket = session['basket'][user_id]
     table_id = request.form.get('table_id')
