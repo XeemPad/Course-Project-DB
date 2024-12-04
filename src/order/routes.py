@@ -156,7 +156,7 @@ def save_order():
 
 def form_basket(dishes_info: list[dict]) -> list[dict]:
     user_id = str(session['user_id'])
-    if 'basket' not in session or user_id not in session['basket']:
+    if 'basket' not in session or user_id not in session['basket'] or not dishes_info:
         return []
     
     basket = []
